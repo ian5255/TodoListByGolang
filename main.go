@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"TodoListByGolang/model"
@@ -12,19 +13,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var lr = &model.LogRecord{
-	JobName: "撿破爛1",
-	Command: "推車撿破爛1",
-	Err:     "撿不到破爛1",
-	Content: "剪了好多破爛1",
-}
+// var lr = &model.LogRecord{
+// 	JobName: "撿破爛1",
+// 	Command: "推車撿破爛1",
+// 	Err:     "撿不到破爛1",
+// 	Content: "剪了好多破爛1",
+// }
 
 func main() {
-	// lr := new(model.LogRecord)
-	// lr.JobName = "撿破爛"
-	// lr.Command = "推車撿破爛"
-	// lr.Err = "撿不到破爛"
-	// lr.Content = "剪了好多破爛"
+	lr := new(model.LogRecord)
+	lr.JobName = "撿破爛5566"
+	lr.Command = "推車撿破爛5566"
+	lr.Err = "撿不到破爛5566"
+	lr.Content = "剪了好多破爛5566"
 
 	// lr := &model.LogRecord{
 	// 	JobName: "撿破爛",
@@ -39,7 +40,31 @@ func main() {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	collection.InsertOne(context.TODO(), lr)
-	res, _ := collection.InsertOne(ctx, bson.D{{"name", "pi"}, {"value", 3.14159}})
-	id := res.InsertedID
-	fmt.Println(id)
+
+	// GET
+	cur, err := collection.Find(ctx, bson.D{{"jobName", "撿破爛5566"}})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(ctx)
+	// 定义bson.M类型的文档数组，bson.M是一个map类型的键值数据结构
+	var results []bson.M
+	// 使用All函数获取所有查询结果，并将结果保存至results变量。
+	// if err = cur.All(context.TODO(), &results); err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(results)
+	// 遍历结果数组
+	// for _, result := range results {
+	// 	fmt.Println(*result)
+	// }
+	for cur.Next(ctx) {
+		var document bson.M
+		err = cur.Decode(&document)
+		if err != nil {
+			log.Println(err)
+		}
+		results = append(results, document)
+	}
+	fmt.Println(results)
 }
