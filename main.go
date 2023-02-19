@@ -92,4 +92,12 @@ func main() {
 	if result2.UpsertedCount != 0 {
 		fmt.Printf("inserted a new document with ID %v\n", result2.UpsertedID)
 	}
+
+	// DeleteMany
+	filterD := bson.D{{"jobName", "撿破爛1"}}
+	deleteResult, err := collection.DeleteMany(context.TODO(), filterD)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
 }
