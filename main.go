@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -59,6 +60,25 @@ func main() {
 	if err = cur.All(context.TODO(), &results); err != nil {
 		log.Fatal(err)
 	}
-	// jsondata, _ := json.Marshal(results)
-	// fmt.Println(string(jsondata))
+	jsondata, _ := json.Marshal(results)
+	fmt.Println(string(jsondata))
+
+	// UpdateOne
+	filter := bson.D{{"jobName", "撿破爛7"}}
+	opts := options.Update().SetUpsert(true) // 如果資料不存在則新增
+	update := bson.D{
+		{"$set", bson.D{
+			{"command", "推車撿破爛77778888"}},
+		}}
+	result, err := collection.UpdateOne(context.TODO(), filter, update, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if result.MatchedCount != 0 {
+		fmt.Printf("Matched %v documents and updated %v documents.\n", result.MatchedCount, result.ModifiedCount)
+	}
+	if result.UpsertedCount != 0 {
+		fmt.Printf("inserted a new document with ID %v\n", result.UpsertedID)
+	}
+	fmt.Println("result", result)
 }
