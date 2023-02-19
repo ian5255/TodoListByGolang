@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -33,6 +32,21 @@ func main() {
 	// Insert
 	collection.InsertOne(context.TODO(), lr)
 
+	// InsertMany
+	var datas []interface{}
+	for i := 0; i < 5; i++ {
+		el := new(model.LogRecord)
+		el.JobName = fmt.Sprint("撿破爛", i)
+		el.Command = fmt.Sprint("推車撿破爛", i)
+		el.Err = fmt.Sprint("撿不到破爛", i)
+		el.Content = fmt.Sprint("剪了好多破爛", i)
+		datas = append(datas, el)
+	}
+	_, err := collection.InsertMany(context.TODO(), datas)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// GET
 	findOptions := options.Find()
 	findOptions.SetLimit(3)
@@ -45,6 +59,6 @@ func main() {
 	if err = cur.All(context.TODO(), &results); err != nil {
 		log.Fatal(err)
 	}
-	jsondata, _ := json.Marshal(results)
-	fmt.Println(string(jsondata))
+	// jsondata, _ := json.Marshal(results)
+	// fmt.Println(string(jsondata))
 }
