@@ -9,6 +9,9 @@ import (
 
 	"TodoListByGolang/model"
 
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -51,7 +54,7 @@ func main() {
 	// GET
 	findOptions := options.Find()
 	findOptions.SetLimit(3)
-	cur, err := collection.Find(ctx, bson.D{{"jobName", "撿破爛5566"}}, findOptions)
+	cur, err := collection.Find(ctx, bson.D{{Key: "jobName", Value: "撿破爛5566"}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,11 +67,11 @@ func main() {
 	fmt.Println(string(jsondata))
 
 	// UpdateOne
-	filter := bson.D{{"jobName", "撿破爛8"}}
+	filter := bson.D{{Key: "jobName", Value: "撿破爛8"}}
 	opts := options.Update().SetUpsert(true) // 如果資料不存在則新增
 	update := bson.D{
-		{"$set", bson.D{
-			{"command", "推車撿破爛7777888800001"}},
+		{Key: "$set", Value: bson.D{
+			{Key: "command", Value: "推車撿破爛7777888800001"}},
 		}}
 	result, err := collection.UpdateOne(context.TODO(), filter, update, opts)
 	if err != nil {
@@ -94,10 +97,18 @@ func main() {
 	}
 
 	// DeleteMany
-	filterD := bson.D{{"jobName", "撿破爛1"}}
+	filterD := bson.D{{Key: "jobName", Value: "撿破爛1"}}
 	deleteResult, err := collection.DeleteMany(context.TODO(), filterD)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("Deleted %v documents in the trainers collection\n", deleteResult.DeletedCount)
+
+	// =================================================================================================================
+	// Gin
+	r := gin.Default()
+	r.GET("/todolist", func(c *gin.Context) {
+		c.JSON(http.StatusOK, results)
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080
 }
