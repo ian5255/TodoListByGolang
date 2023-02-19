@@ -34,7 +34,9 @@ func main() {
 	collection.InsertOne(context.TODO(), lr)
 
 	// GET
-	cur, err := collection.Find(ctx, bson.D{{"jobName", "撿破爛5566"}})
+	findOptions := options.Find()
+	findOptions.SetLimit(3)
+	cur, err := collection.Find(ctx, bson.D{{"jobName", "撿破爛5566"}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
