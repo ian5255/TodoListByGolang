@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -48,23 +49,26 @@ func main() {
 	}
 	defer cur.Close(ctx)
 	// 定义bson.M类型的文档数组，bson.M是一个map类型的键值数据结构
-	var results []bson.M
+	var results []model.LogRecord
 	// 使用All函数获取所有查询结果，并将结果保存至results变量。
-	// if err = cur.All(context.TODO(), &results); err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err = cur.All(context.TODO(), &results); err != nil {
+		log.Fatal(err)
+	}
+	jsondata, _ := json.Marshal(results)
+	fmt.Println(string(jsondata))
 	// fmt.Println(results)
 	// 遍历结果数组
 	// for _, result := range results {
 	// 	fmt.Println(*result)
 	// }
-	for cur.Next(ctx) {
-		var document bson.M
-		err = cur.Decode(&document)
-		if err != nil {
-			log.Println(err)
-		}
-		results = append(results, document)
-	}
-	fmt.Println(results)
+
+	// for cur.Next(ctx) {
+	// 	var document bson.M
+	// 	err = cur.Decode(&document)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// 	results = append(results, document)
+	// }
+	// fmt.Println(results)
 }
