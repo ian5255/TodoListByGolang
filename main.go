@@ -64,11 +64,11 @@ func main() {
 	fmt.Println(string(jsondata))
 
 	// UpdateOne
-	filter := bson.D{{"jobName", "撿破爛7"}}
+	filter := bson.D{{"jobName", "撿破爛8"}}
 	opts := options.Update().SetUpsert(true) // 如果資料不存在則新增
 	update := bson.D{
 		{"$set", bson.D{
-			{"command", "推車撿破爛77778888"}},
+			{"command", "推車撿破爛7777888800001"}},
 		}}
 	result, err := collection.UpdateOne(context.TODO(), filter, update, opts)
 	if err != nil {
@@ -80,5 +80,16 @@ func main() {
 	if result.UpsertedCount != 0 {
 		fmt.Printf("inserted a new document with ID %v\n", result.UpsertedID)
 	}
-	fmt.Println("result", result)
+
+	// UpdateMany
+	result2, err2 := collection.UpdateMany(context.TODO(), filter, update, opts)
+	if err2 != nil {
+		log.Fatal(err)
+	}
+	if result2.MatchedCount != 0 {
+		fmt.Printf("Matched %v documents and updated %v documents.\n", result2.MatchedCount, result2.ModifiedCount)
+	}
+	if result2.UpsertedCount != 0 {
+		fmt.Printf("inserted a new document with ID %v\n", result2.UpsertedID)
+	}
 }
