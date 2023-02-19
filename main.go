@@ -48,7 +48,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer cur.Close(ctx)
-	// 定义bson.M类型的文档数组，bson.M是一个map类型的键值数据结构
 	var results []model.LogRecord
 	// 使用All函数获取所有查询结果，并将结果保存至results变量。
 	if err = cur.All(context.TODO(), &results); err != nil {
